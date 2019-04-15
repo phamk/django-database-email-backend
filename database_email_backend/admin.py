@@ -117,7 +117,7 @@ class SendEmailForm(forms.ModelForm):
             'bcc_emails': forms.TextInput(attrs={'size': WIDE_INPUT_SIZE}),
             'subject': forms.TextInput(attrs={'size': WIDE_INPUT_SIZE}),
         }
-        
+        fields = '__all__'
 
 
 class SendEmailAdmin(admin.ModelAdmin):
