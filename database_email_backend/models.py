@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from database_email_backend.fields import Base64Field
 from django.db import models
 
@@ -10,7 +10,7 @@ class Email(models.Model):
     cc_emails = models.TextField(blank=True, default='')
     bcc_emails = models.TextField(blank=True, default='')
     all_recipients = models.TextField(blank=True, default='')
-    headers =  models.TextField(blank=True, default='')
+    headers = models.TextField(blank=True, default='')
 
     subject = models.TextField(blank=True, default='')
     body = models.TextField(blank=True, default='')
@@ -26,8 +26,9 @@ class Email(models.Model):
             self.attachment_count_cache = self.attachments.count()
         return self.attachment_count_cache
 
+
 class Attachment(models.Model):
-    email = models.ForeignKey(Email, related_name='attachments')
+    email = models.ForeignKey(Email, related_name='attachments', on_delete=models.CASCADE)
     filename = models.CharField(max_length=255, null=True, blank=True, default=None)
     content = Base64Field(null=True, blank=True, default=None)
     mimetype = models.CharField(max_length=255, null=True, blank=True, default=None)
