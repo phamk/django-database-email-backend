@@ -64,7 +64,7 @@ class EmailAdmin(admin.ModelAdmin):
 
     def get_urls(self):
         urlpatterns = super(EmailAdmin, self).get_urls()
-        from django.conf.urls.defaults import patterns, url
+        from django.urls import path
 
         def wrap(view):
             def wrapper(*args, **kwargs):
@@ -73,11 +73,10 @@ class EmailAdmin(admin.ModelAdmin):
 
         appname = self.model._meta.app_label
 
-        urlpatterns = patterns('',
-            url(r'^(?P<email_id>\d+)/attachments/(?P<attachment_id>\d+)/(?P<filename>[\w.]+)$',
-                wrap(self.serve_attachment),
-                name='%s_email_attachment' % appname)
-        ) + urlpatterns
+        urlpatterns = [
+            path('<int:email_id/attachments/<int:attachment_id>/<str:filename>/', wrap(self.serve_attachment), name='%s_email_attachment' % appname)
+        ] + urlpatterns
+
         return urlpatterns
 
     def serve_attachment(self, request, email_id, attachment_id, filename, extra_context=None):
