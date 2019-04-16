@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from django.http import HttpResponseRedirect
 from django.contrib import admin
 from django import forms
@@ -7,9 +7,9 @@ from django.core.mail import message
 from django.db.models import Count
 from django.urls import reverse
 from django.utils.decorators import update_wrapper
-from django.utils.text import mark_safe
+from django.utils.html import format_html
 from django.utils.translation import ugettext as _
-from django.template.defaultfilters import escape, linebreaks_filter
+from django.template.defaultfilters import linebreaks_filter
 
 from database_email_backend.models import Email, Attachment
 
@@ -32,7 +32,7 @@ class AttachmentInlineAdmin(admin.TabularInline):
     def file_link(self, obj):
         if self.obj:
             url_name = '%s:%s_email_attachment' % (self.admin_site.name, self.model._meta.app_label,)
-            kwargs={
+            kwargs = {
                 'email_id': str(obj.email_id),
                 'attachment_id': str(obj.id),
                 'filename': str(obj.filename)}
@@ -40,29 +40,32 @@ class AttachmentInlineAdmin(admin.TabularInline):
             return '<a href="%(url)s">%(filename)s</a>' % {'filename': obj.filename, 'url': url}
         else:
             return ''
+
     file_link.allow_tags = True
 
 
 class EmailAdmin(admin.ModelAdmin):
     list_display = ('from_email', 'to_emails', 'subject', 'body_stripped', 'sent_at', 'attachment_count')
     date_hierarchy = 'sent_at'
-    search_fields =  ('from_email', 'to_emails', 'subject', 'body',)
+    search_fields = ('from_email', 'to_emails', 'subject', 'body',)
     exclude = ('raw', 'body')
     readonly_fields = list_display + ('cc_emails', 'bcc_emails', 'all_recipients', 'headers', 'body_br', 'body_html')
     inlines = (AttachmentInlineAdmin,)
-    
+
     def queryset(self, request):
         queryset = super(EmailAdmin, self).queryset(request)
         return queryset.annotate(attachment_count_cache=Count('attachments'))
 
     def attachment_count(self, obj):
         return obj.attachment_count
+
     attachment_count.admin_order_field = 'attachment_count_cache'
-    
+
     def body_stripped(self, obj):
-        if obj.body and len(obj.body)>100:
+        if obj.body and len(obj.body) > 100:
             return obj.body[:100] + ' [...]'
         return obj.body
+
     body_stripped.short_description = 'body'
     body_stripped.admin_order_field = 'body'
 
@@ -73,13 +76,15 @@ class EmailAdmin(admin.ModelAdmin):
         def wrap(view):
             def wrapper(*args, **kwargs):
                 return self.admin_site.admin_view(view)(*args, **kwargs)
+
             return update_wrapper(wrapper, view)
 
         appname = self.model._meta.app_label
 
         urlpatterns = [
-            path('<int:email_id>/attachments/<int:attachment_id>/<str:filename>/', wrap(self.serve_attachment), name='%s_email_attachment' % appname)
-        ] + urlpatterns
+                          path('<int:email_id>/attachments/<int:attachment_id>/<str:filename>/',
+                               wrap(self.serve_attachment), name='%s_email_attachment' % appname)
+                      ] + urlpatterns
 
         return urlpatterns
 
@@ -93,12 +98,15 @@ class EmailAdmin(admin.ModelAdmin):
 
     def body_br(self, obj):
         return linebreaks_filter(obj.body)
+
     body_br.allow_tags = True
     body_br.short_description = 'body'
     body_br.admin_order_field = 'body'
 
     def body_html(self, obj):
-        return escape(mark_safe(obj.body))
+        return format_html(obj.body)
+
+    body_html.allow_tags = True
 
 
 admin.site.register(Email, EmailAdmin)
@@ -130,13 +138,13 @@ class SendEmailForm(forms.ModelForm):
 class SendEmailAdmin(admin.ModelAdmin):
     form = SendEmailForm
     fieldsets = (
-        (None, {'fields':('from_email', 'to_emails')}),
+        (None, {'fields': ('from_email', 'to_emails')}),
         (_('cc and bcc'), {
             'fields': ('cc_emails', 'bcc_emails'),
             'classes': ('collapse',)}),
         (None, {'fields': ('subject', 'body')}),
     )
-    
+
     def save_model(self, request, obj, form, change):
         """
         sends the email and does not save it
@@ -170,4 +178,6 @@ class SendEmailAdmin(admin.ModelAdmin):
             'change': False,
             'delete': False
         }
+
+
 admin.site.register(SendEmail, SendEmailAdmin)
