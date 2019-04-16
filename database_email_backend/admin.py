@@ -74,7 +74,7 @@ class EmailAdmin(admin.ModelAdmin):
         appname = self.model._meta.app_label
 
         urlpatterns = [
-            path('<int:email_id/attachments/<int:attachment_id>/<str:filename>/', wrap(self.serve_attachment), name='%s_email_attachment' % appname)
+            path('<int:email_id>/attachments/<int:attachment_id>/<str:filename>/', wrap(self.serve_attachment), name='%s_email_attachment' % appname)
         ] + urlpatterns
 
         return urlpatterns
