@@ -66,7 +66,7 @@ class EmailAdmin(admin.ModelAdmin):
             return obj.body[:100] + ' [...]'
         return obj.body
 
-    body_stripped.short_description = 'body'
+    body_stripped.short_description = 'body_truncated'
     body_stripped.admin_order_field = 'body'
 
     def get_urls(self):
@@ -100,7 +100,7 @@ class EmailAdmin(admin.ModelAdmin):
         return linebreaks_filter(obj.body)
 
     body_br.allow_tags = True
-    body_br.short_description = 'body'
+    body_br.short_description = 'body_raw'
     body_br.admin_order_field = 'body'
 
     def body_html(self, obj):
