@@ -17,7 +17,7 @@ class DatabaseEmailBackend(BaseEmailBackend):
                 bcc_emails = u', '.join(message.bcc),
                 all_recipients = u', '.join(message.recipients()),
                 subject = u'%s' % message.subject,
-                body = u'%s' % message.body,
+                body = u'%s' % message.body if not message.alternatives else message.alternatives[0][0],
                 raw = u'%s' % smart_text(message.message().as_string())
             )
             for attachment in message.attachments:
