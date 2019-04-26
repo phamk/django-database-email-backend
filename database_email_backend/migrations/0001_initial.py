@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('filename', models.CharField(blank=True, default=None, max_length=255, null=True)),
-                ('content_base64', database_email_backend.fields.Base64Field(blank=True, db_column='content', default=None, null=True)),
+                ('content', database_email_backend.fields.Base64Field(blank=True, db_column='content', default=None, null=True)),
                 ('mimetype', models.CharField(blank=True, default=None, max_length=255, null=True)),
             ],
         ),
