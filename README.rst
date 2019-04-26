@@ -13,8 +13,8 @@ Installation::
 
     pip install django-database-email-backend
 
-Add ``database_email_backend`` to ``INSTALLED_APPS`` and run ``manage.py syncdb`` or
-``manage.py migrate django_database_email_backend`` if you are using South.
+Add ``database_email_backend`` to ``INSTALLED_APPS`` and run
+``manage.py migrate django_database_email_backend``.
 
 Add the email backend setting::
 
