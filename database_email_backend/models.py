@@ -30,5 +30,5 @@ class Email(models.Model):
 class Attachment(models.Model):
     email = models.ForeignKey(Email, related_name='attachments', on_delete=models.CASCADE)
     filename = models.CharField(max_length=255, null=True, blank=True, default=None)
-    content = Base64Field(null=True, blank=True, default=None)
+    content = models.BinaryField(null=True, blank=True, default=None)
     mimetype = models.CharField(max_length=255, null=True, blank=True, default=None)
