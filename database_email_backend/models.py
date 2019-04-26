@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from database_email_backend.fields import Base64Field
 from django.db import models
 
 
