@@ -30,14 +30,16 @@ class AttachmentInlineAdmin(admin.TabularInline):
     fields = ('file_link', 'mimetype',)
 
     def file_link(self, obj):
-        if self.obj:
+        if obj.id:
             url_name = '%s:%s_email_attachment' % (self.admin_site.name, self.model._meta.app_label,)
             kwargs = {
                 'email_id': str(obj.email_id),
                 'attachment_id': str(obj.id),
                 'filename': str(obj.filename)}
             url = reverse(url_name, kwargs=kwargs)
-            return '<a href="%(url)s">%(filename)s</a>' % {'filename': obj.filename, 'url': url}
+            return format_html(
+                f'<a href="{url}">{obj.filename}</a>'
+            )
         else:
             return ''
 
@@ -92,7 +94,8 @@ class EmailAdmin(admin.ModelAdmin):
         if not self.has_change_permission(request, None):
             raise PermissionDenied
         attachment = Attachment.objects.get(email__id=email_id, id=attachment_id, filename=filename)
-        response = HttpResponse(attachment.content, mimetype=attachment.mimetype or 'application/octet-stream')
+        response = HttpResponse(attachment.content, content_type=attachment.mimetype or 'application/octet-stream')
+        response["Content-Disposition"] = f"attachment; filename={filename}"
         response["Content-Length"] = len(attachment.content)
         return response
 
