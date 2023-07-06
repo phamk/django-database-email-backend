@@ -2,6 +2,8 @@
 django-database-email-backend
 =============================
 
+[Updated to support django 2.0+ (3.0 untested)]
+
 django-database-email-backend is a simple email backend for django that delivers emails to the database. All sent
 emails can be reviewed and searched in admin. This can be practical while developing where the console backend can't be
 used (e.g on a development or staging server).
