@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 from django.contrib import admin
 from django import forms
@@ -8,7 +9,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django.utils.decorators import update_wrapper
 from django.utils.html import format_html
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from django.template.defaultfilters import linebreaks_filter
 
 from database_email_backend.models import Email, Attachment
